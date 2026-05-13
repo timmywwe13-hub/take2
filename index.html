@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Game Arcade</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <!-- MAIN MENU -->
+    <div id="menu-screen" class="screen active">
+        <div class="hub-container">
+            <h1 class="hub-title">Game Arcade</h1>
+            <div class="game-grid">
+                <div class="game-card card-blackjack" onclick="GameHub.app.startGame('blackjack')">
+                    <div class="icon">🃏</div>
+                    <h2>Blackjack</h2>
+                    <p>Beat the dealer to 21. Risk your chips for the big win!</p>
+                </div>
+                <div class="game-card card-scramble" onclick="GameHub.app.startGame('scramble')">
+                    <div class="icon">🔤</div>
+                    <h2>Word Scramble</h2>
+                    <p>Unscramble the letters before time runs out. Fast answers earn bonuses!</p>
+                </div>
+                <div class="game-card card-snake" onclick="GameHub.app.startGame('snake')">
+                    <div class="icon">🐍</div>
+                    <h2>Snake</h2>
+                    <p>The classic arcade experience. Eat, grow, and don't hit the walls!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLACKJACK SCREEN -->
+    <div id="blackjack-screen" class="screen">
+        <button class="back-btn" onclick="GameHub.app.showMenu()">← Back to Menu</button>
+        <div class="bj-container">
+            <h1 class="bj-accent">Blackjack</h1>
+            <div class="bet-controls">
+                Chips: $<span id="bj-chips">500</span> | 
+                Bet: $<input type="number" id="bj-bet-input" class="bet-input" value="10" min="10">
+                <button class="btn bj-btn" onclick="GameHub.blackjack.adjustBet(10)">+</button>
+                <button class="btn bj-btn" onclick="GameHub.blackjack.adjustBet(-10)">-</button>
+            </div>
+            
+            <div class="bj-table">
+                <div>
+                    <h3>Dealer <span id="bj-dealer-score" style="display:none"></span></h3>
+                    <div id="bj-dealer-hand" class="hand-area"></div>
+                </div>
+                <div>
+                    <h3>You <span id="bj-player-score"></span></h3>
+                    <div id="bj-player-hand" class="hand-area"></div>
+                </div>
+            </div>
+
+            <div id="bj-controls">
+                <button id="bj-deal-btn" class="btn bj-btn" onclick="GameHub.blackjack.deal()">Deal</button>
+                <div id="bj-action-btns" style="display:none">
+                    <button class="btn bj-btn" onclick="GameHub.blackjack.hit()">Hit</button>
+                    <button class="btn bj-btn" onclick="GameHub.blackjack.stand()">Stand</button>
+                    <button class="btn bj-btn" onclick="GameHub.blackjack.double()">Double Down</button>
+                </div>
+            </div>
+            <h2 id="bj-message" style="margin-top:20px"></h2>
+            <button id="bj-next-btn" class="btn bj-btn" style="display:none; margin-top:20px" onclick="GameHub.blackjack.resetRound()">New Round</button>
+        </div>
+    </div>
+
+    <!-- SCRAMBLE SCREEN -->
+    <div id="scramble-screen" class="screen">
+        <button class="back-btn" onclick="GameHub.app.showMenu()">← Back to Menu</button>
+        <div class="sc-container">
+            <h1 class="sc-accent">Word Scramble</h1>
+            <div class="stats-bar">
+                <span>Score: <b id="sc-score">0</b></span>
+                <span>Streak: <b id="sc-streak">0</b></span>
+                <span>Word: <b id="sc-count">1</b>/10</span>
+            </div>
+            <div class="timer-bar-container">
+                <div id="sc-timer-bar" class="timer-bar"></div>
+            </div>
+            <div id="sc-word" class="sc-word">-----</div>
+            <input type="text" id="sc-input" class="sc-input" placeholder="Type your guess..." autocomplete="off">
+            <div>
+                <button id="sc-submit-btn" class="btn sc-btn" onclick="GameHub.wordScramble.checkGuess()">Submit</button>
+                <button id="sc-hint-btn" class="btn sc-btn" onclick="GameHub.wordScramble.useHint()">Hint (-3 pts)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SNAKE SCREEN -->
+    <div id="snake-screen" class="screen">
+        <button class="back-btn" onclick="GameHub.app.showMenu()">← Back to Menu</button>
+        <div class="sn-container">
+            <h1 class="sn-accent">Classic Snake</h1>
+            <div style="margin: 10px 0; font-size: 1.2rem;">
+                Score: <span id="sn-score">0</span> | High Score: <span id="sn-highscore">0</span>
+            </div>
+            <div style="position: relative;">
+                <canvas id="snakeCanvas" width="400" height="400"></canvas>
+                <div id="sn-pause-msg" class="pause-overlay">PAUSED</div>
+            </div>
+            <div class="dpad">
+                <div></div><button class="dbtn" onclick="GameHub.snake.setDir('UP')">↑</button><div></div>
+                <button class="dbtn" onclick="GameHub.snake.setDir('LEFT')">←</button>
+                <button class="dbtn" onclick="GameHub.snake.setDir('DOWN')">↓</button>
+                <button class="dbtn" onclick="GameHub.snake.setDir('RIGHT')">→</button>
+            </div>
+            <button class="btn sn-btn" style="margin-top:15px" onclick="GameHub.snake.togglePause()">Pause (P)</button>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-overlay" class="overlay">
+        <div class="overlay-content">
+            <h1 id="modal-title">Game Over</h1>
+            <p id="modal-body" style="margin: 20px 0; font-size: 1.2rem;"></p>
+            <button id="modal-btn" class="btn">Play Again</button>
+        </div>
+    </div>
+
+    <!-- JS files loaded in dependency order -->
+    <script src="./js/blackjack.js"></script>
+    <script src="./js/wordscramble.js"></script>
+    <script src="./js/snake.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
